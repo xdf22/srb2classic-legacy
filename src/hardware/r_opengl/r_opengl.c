@@ -85,7 +85,6 @@ static GLboolean MipMap = GL_FALSE;
 static GLint min_filter = GL_LINEAR;
 static GLint mag_filter = GL_LINEAR;
 static GLint anisotropic_filter = 0;
-static FTransform  md2_transform;
 
 const GLubyte *gl_extensions = NULL;
 
@@ -2222,13 +2221,11 @@ EXPORT void HWRAPI(DrawModel) (model_t *model, INT32 frameIndex, INT32 duration,
 EXPORT void HWRAPI(SetTransform) (FTransform *stransform)
 {
 	static boolean special_splitscreen;
+	float used_fov;
 	pglLoadIdentity();
 	if (stransform)
 	{
-		boolean fovx90;
-		// keep a trace of the transformation for md2
-		memcpy(&md2_transform, stransform, sizeof (md2_transform));
-
+		used_fov = stransform->fovxangle;
 #ifdef USE_FTRANSFORM_MIRROR
 		// mirroring from Kart
 		if (stransform->mirror)
@@ -2240,38 +2237,37 @@ EXPORT void HWRAPI(SetTransform) (FTransform *stransform)
 		else
 			pglScalef(stransform->scalex, stransform->scaley, -stransform->scalez);
 
-		pglRotatef(stransform->anglex       , 1.0f, 0.0f, 0.0f);
+
+		pglRotatef(stransform->anglex, 1.0f, 0.0f, 0.0f);
 		pglRotatef(stransform->angley+270.0f, 0.0f, 1.0f, 0.0f);
 		pglTranslatef(-stransform->x, -stransform->z, -stransform->y);
 
-		pglMatrixMode(GL_PROJECTION);
-		pglLoadIdentity();
-		fovx90 = stransform->fovxangle > 0.0f && fabsf(stransform->fovxangle - 90.0f) < 0.5f;
-		special_splitscreen = (stransform->splitscreen && fovx90);
-		if (special_splitscreen)
-			GLPerspective(53.13f, 2*ASPECT_RATIO);  // 53.13 = 2*atan(0.5)
-		else
-			GLPerspective(stransform->fovxangle, ASPECT_RATIO);
-		pglGetFloatv(GL_PROJECTION_MATRIX, projMatrix); // added for new coronas' code (without depth buffer)
-		pglMatrixMode(GL_MODELVIEW);
+		special_splitscreen = stransform->splitscreen;
 	}
 	else
 	{
+		used_fov = fov;
 		pglScalef(1.0f, 1.0f, -1.0f);
-
-		pglMatrixMode(GL_PROJECTION);
-		pglLoadIdentity();
-		if (special_splitscreen)
-			GLPerspective(53.13f, 2*ASPECT_RATIO);  // 53.13 = 2*atan(0.5)
-		else
-			//Hurdler: is "fov" correct?
-			GLPerspective(fov, ASPECT_RATIO);
-		pglGetFloatv(GL_PROJECTION_MATRIX, projMatrix); // added for new coronas' code (without depth buffer)
-		pglMatrixMode(GL_MODELVIEW);
 	}
+
+	pglMatrixMode(GL_PROJECTION);
+	pglLoadIdentity();
+
+	if (special_splitscreen)
+	{
+		used_fov = atan(tan(used_fov*M_PI/360)*0.8)*360/M_PI;
+		GLPerspective(used_fov, 2*ASPECT_RATIO);
+	}
+	else
+		GLPerspective(used_fov, ASPECT_RATIO);
+
+	pglGetFloatv(GL_PROJECTION_MATRIX, projMatrix); // added for new coronas' code (without depth buffer)
+	pglMatrixMode(GL_MODELVIEW);
 
 	pglGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix); // added for new coronas' code (without depth buffer)
 }
+
+
 
 EXPORT INT32  HWRAPI(GetTextureUsed) (void)
 {

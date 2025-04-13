@@ -26,6 +26,10 @@ extern INT32 centerx, centery;
 
 extern fixed_t centerxfrac, centeryfrac;
 extern fixed_t projection, projectiony;
+extern fixed_t fovtan;
+
+// WARNING: a should be unsigned but to add with 2048, it isn't!
+#define AIMINGTODY(a) FixedDiv((FINETANGENT((2048+(((INT32)a)>>ANGLETOFINESHIFT)) & FINEMASK)*160)>>FRACBITS, fovtan)
 
 extern size_t validcount, linecount, loopcount, framecount;
 
@@ -84,6 +88,7 @@ extern consvar_t cv_shadowoffs;
 #endif //#ifdef GLBADSHADOWS
 extern consvar_t cv_translucency;
 extern consvar_t cv_drawdist, cv_drawdist_nights, cv_drawdist_precip;
+extern consvar_t cv_fov;
 extern consvar_t cv_skybox;
 extern consvar_t cv_tailspickup;
 

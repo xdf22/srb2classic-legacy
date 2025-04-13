@@ -1303,7 +1303,7 @@ static menuitem_t OP_OpenGLOptionsMenu[] =
 	{IT_STRING|IT_CVAR,         NULL, "Models",              &cv_grmodels,             10},
 	{IT_STRING|IT_CVAR,         NULL, "Model interpolation", &cv_grmodelinterpolation, 20},
 
-	{IT_STRING|IT_CVAR,         NULL, "Field of view",   &cv_grfov,            40},
+	{IT_STRING|IT_CVAR,         NULL, "Field of view",   &cv_fov,            40},
 	{IT_STRING|IT_CVAR,         NULL, "Quality",         &cv_scr_depth,        50},
 	{IT_STRING|IT_CVAR,         NULL, "Texture Filter",  &cv_grfiltermode,     60},
 	{IT_STRING|IT_CVAR,         NULL, "Anisotropic",     &cv_granisotropicmode,70},
