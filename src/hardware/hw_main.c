@@ -88,12 +88,11 @@ static UINT32 atohex(const char *s);
 static void CV_filtermode_ONChange(void);
 static void CV_anisotropic_ONChange(void);
 static void CV_FogDensity_ONChange(void);
-static void CV_grFov_OnChange(void);
 // ==========================================================================
 //                                          3D ENGINE COMMANDS & CONSOLE VARS
 // ==========================================================================
 
-static CV_PossibleValue_t grfov_cons_t[] = {{0, "MIN"}, {179*FRACUNIT, "MAX"}, {0, NULL}};
+static CV_PossibleValue_t grfov_cons_t[] = {{0, "MIN"}, {179, "MAX"}, {0, NULL}};
 static CV_PossibleValue_t grfiltermode_cons_t[]= {{HWD_SET_TEXTUREFILTER_POINTSAMPLED, "Nearest"},
 	{HWD_SET_TEXTUREFILTER_BILINEAR, "Bilinear"}, {HWD_SET_TEXTUREFILTER_TRILINEAR, "Trilinear"},
 	{HWD_SET_TEXTUREFILTER_MIXED1, "Linear_Nearest"},
@@ -113,7 +112,7 @@ static consvar_t cv_gralpha = {"gr_alpha", "160", 0, CV_Unsigned, NULL, 0, NULL,
 static consvar_t cv_grbeta = {"gr_beta", "0", 0, CV_Unsigned, NULL, 0, NULL, NULL, 0, 0, NULL};
 
 consvar_t cv_grrounddown = {"gr_rounddown", "Off", 0, CV_OnOff, NULL, 0, NULL, NULL, 0, 0, NULL};
-consvar_t cv_grfov = {"gr_fov", "90", CV_FLOAT|CV_CALL, grfov_cons_t, CV_grFov_OnChange, 0, NULL, NULL, 0, 0, NULL};
+consvar_t cv_grfov = {"gr_fov", "90", CV_SAVE, grfov_cons_t, NULL, 0, NULL, NULL, 0, 0, NULL};
 consvar_t cv_grfogdensity = {"gr_fogdensity", "150", CV_CALL|CV_NOINIT, CV_Unsigned,
                              CV_FogDensity_ONChange, 0, NULL, NULL, 0, 0, NULL};
 
@@ -5953,7 +5952,7 @@ static void HWR_DrawSkyBackground(player_t *player)
 	if (cv_grskydome.value)
 	{
 		FTransform transform;
-		const float fpov = FIXED_TO_FLOAT(cv_grfov.value+player->fovadd);
+		const float fpov = FIXED_TO_FLOAT((cv_grfov.value)*FRACUNIT+player->fovadd);
 		postimg_t *type;
 
 		if (splitscreen && player == &players[secondarydisplayplayer])
@@ -6131,7 +6130,7 @@ void HWR_SetViewSize(void)
 // ==========================================================================
 void HWR_RenderSkyboxView(INT32 viewnumber, player_t *player)
 {
-	const float fpov = FIXED_TO_FLOAT(cv_grfov.value+player->fovadd);
+	const float fpov = FIXED_TO_FLOAT((cv_grfov.value)*FRACUNIT+player->fovadd);
 	postimg_t *type;
 
 	if (splitscreen && player == &players[secondarydisplayplayer])
@@ -6255,7 +6254,7 @@ if (0)
 		viewangle = localaiming2;
 
 	// Handle stuff when you are looking farther up or down.
-	if ((aimingangle || cv_grfov.value+player->fovadd > 90*FRACUNIT))
+	if ((aimingangle || (cv_grfov.value)*FRACUNIT+player->fovadd > 90*FRACUNIT))
 	{
 		dup_viewangle += ANGLE_90;
 		HWR_ClearClipSegs();
@@ -6333,7 +6332,7 @@ if (0)
 // ==========================================================================
 void HWR_RenderPlayerView(INT32 viewnumber, player_t *player)
 {
-	const float fpov = FIXED_TO_FLOAT(cv_grfov.value+player->fovadd);
+	const float fpov = FIXED_TO_FLOAT((cv_grfov.value)*FRACUNIT+player->fovadd);
 	postimg_t *type;
 
 	const boolean skybox = (skyboxmo[0] && cv_skybox.value); // True if there's a skybox object and skyboxes are on
@@ -6473,7 +6472,7 @@ if (0)
 		viewangle = localaiming2;
 
 	// Handle stuff when you are looking farther up or down.
-	if ((aimingangle || cv_grfov.value+player->fovadd > 90*FRACUNIT))
+	if ((aimingangle || (cv_grfov.value)*FRACUNIT+player->fovadd > 90*FRACUNIT))
 	{
 		dup_viewangle += ANGLE_90;
 		HWR_ClearClipSegs();
@@ -6594,13 +6593,6 @@ static void HWR_FoggingOn(void)
 // ==========================================================================
 //                                                         3D ENGINE COMMANDS
 // ==========================================================================
-
-
-static void CV_grFov_OnChange(void)
-{
-	if ((netgame || multiplayer) && !cv_debug && cv_grfov.value != 90*FRACUNIT)
-		CV_Set(&cv_grfov, cv_grfov.defaultvalue);
-}
 
 static void Command_GrStats_f(void)
 {
