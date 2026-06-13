@@ -1,0 +1,40 @@
+/** SRB2 CMake Configuration */
+
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
+
+/* DO NOT MODIFY config.h DIRECTLY! It will be overwritten by cmake.
+ * If you want to change a configuration option here, modify it in
+ * your CMakeCache.txt. config.h.in is used as a template for CMake
+ * variables, so you can insert them here too.
+ */
+
+#ifdef CMAKECONFIG
+
+#define ASSET_HASH_SRB2_PK3   "${SRB2_ASSET_srb2.pk3_HASH}"
+#define ASSET_HASH_PLAYER_DTA "${SRB2_ASSET_player.dta_HASH}"
+#define ASSET_HASH_ZONES_PK3  "${SRB2_ASSET_zones.pk3_HASH}"
+#ifdef USE_PATCH_DTA
+#define ASSET_HASH_PATCH_PK3  "${SRB2_ASSET_patch.pk3_HASH}"
+#endif
+
+#define SRB2_COMP_REVISION    "${SRB2_COMP_REVISION}"
+#define SRB2_COMP_BRANCH      "${SRB2_COMP_BRANCH}"
+
+#define CMAKE_ASSETS_DIR      "${CMAKE_SOURCE_DIR}/assets"
+
+#else
+
+/* Manually defined asset hashes for non-CMake builds
+ * Last updated 2019 / 12 / 06 - v2.2.0 - main assets
+ * Last updated 20?? / ?? / ?? - v2.2.? - patch.pk3
+ */
+#define ASSET_HASH_SRB2_PK3   "51419a33b4982d840c6772c159ba7c0a"
+#define ASSET_HASH_ZONES_PK3  "df74843919fd51af26a0baa8e21e4c19"
+#define ASSET_HASH_PLAYER_DTA "56a247e074dd0dc794b6617efef1e918"
+#ifdef USE_PATCH_DTA
+#define ASSET_HASH_PATCH_PK3  "there is no patch.pk3, only zuul"
+#endif
+
+#endif
+#endif
