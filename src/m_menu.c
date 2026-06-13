@@ -1310,11 +1310,15 @@ static menuitem_t OP_OpenGLOptionsMenu[] =
 #if defined (_WINDOWS) && (!((defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)))
 	{IT_STRING|IT_CVAR,         NULL, "Fullscreen",      &cv_fullscreen,       80},
 #endif
-#ifdef ALAM_LIGHTING
-	{IT_SUBMENU|IT_STRING,      NULL, "Lighting...",     &OP_OpenGLLightingDef,     100},
+#ifdef GLBADSHADOWS
+	{IT_STRING|IT_CVAR,         NULL, "Sprite Shadow",   &cv_shadow,      	   	   80},
+	{IT_STRING|IT_CVAR,         NULL, "Shadow Offset",   &cv_shadowoffs,      	   90},
 #endif
-	{IT_SUBMENU|IT_STRING,      NULL, "Fog...",          &OP_OpenGLFogDef,          110},
-	{IT_SUBMENU|IT_STRING,      NULL, "Gamma...",        &OP_OpenGLColorDef,        120},
+#ifdef ALAM_LIGHTING
+	{IT_SUBMENU|IT_STRING,      NULL, "Lighting...",     &OP_OpenGLLightingDef,     110},
+#endif
+	{IT_SUBMENU|IT_STRING,      NULL, "Fog...",          &OP_OpenGLFogDef,          120},
+	{IT_SUBMENU|IT_STRING,      NULL, "Gamma...",        &OP_OpenGLColorDef,        130},
 };
 
 #ifdef ALAM_LIGHTING

@@ -632,4 +632,7 @@ extern const char *compdate, *comptime, *comprevision, *compbranch;
 #define NO_PNG_LUMPS
 #endif
 
+// OpenGL Sprite shadows
+#define GLBADSHADOWS
+
 #endif // __DOOMDEF__
